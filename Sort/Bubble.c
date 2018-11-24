@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+
 void BubbleSort1(int *array)
 {
 	int i, j,t;
@@ -17,6 +18,7 @@ void BubbleSort1(int *array)
 		}
 	}
 }
+
 void BubbleSort2(int *array)
 {
 	int i, j, t;
