@@ -20,21 +20,21 @@ void BubbleSort1(int *array)
 void BubbleSort2(int *array)
 {
 	int i, j, t;
-	int true=0;
+	int flag=0;
 	for (i = 0; i < 9; i++)
 	{
-		true = 1;
+		flag = 1;
 		for (j = 0; j < 9 - i; j++)
 		{
 			if (array[j] > array[j + 1])
 			{
-				 true = 0;
+				 flag = 0;
 				t = array[j];
 				array[j] = array[j + 1];
 				array[j + 1] = t;
 			}
 		}
-		if (1 == true)
+		if (1 == flag)
 		{
 			return;
 		}

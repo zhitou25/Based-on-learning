@@ -10,18 +10,79 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<assert.h>
+#include<malloc.h>
+#include<string.h>
+#pragma warning(disable:4996)
+#define size 100
+
+
+typedef  int DataType;
+typedef struct stack
+{
+	DataType *array;
+	int top;
+	int capacity;
+}stack, *pstack;
+
+void StackInit(pstack pt)
+{
+	pt->array = (DataType*)malloc(sizeof(int)*size);
+	if (!pt->array)
+		return;
+	pt->top = 0;
+	pt->capacity = size;
+}
+void StackPush(pstack pt, DataType data)
+{
+	if (pt->top == size)
+	{
+		pt->array = (DataType*)realloc(pt->array, sizeof(int)*size * 2);
+	}
+	pt->array[pt->top] = data;
+	pt->top++;
+}
+void StackPop(pstack pt)
+{
+	if (!pt)
+		return;
+	if (pt->top > 0)
+		pt->top--;
+}
+int StackTop(pstack pt)
+{
+	if (pt == NULL)
+		return 0;
+	return pt->array[pt->top - 1];
+}
+int StackEmpty(pstack pt)
+{
+	if (!pt)
+		return 1;
+	if (pt->top == 0)
+		return 1;
+	return 0;
+}
+
+//用于两个int交换
+void Swap(int *a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
 /*
 *插入排序
 *  稳定
 */
-void InsertSort(int*arr,int n)
+void InsertSort(int*arr, int n)
 {
 	int temp = 0;
 	for (int i = 1; i < n; i++)
 	{
 		int end = i - 1;
 		temp = arr[i];
-		while (temp < arr[end]&&end>=0)
+		while (temp < arr[end] && end >= 0)
 		{
 			arr[end + 1] = arr[end];
 			end--;
@@ -55,7 +116,7 @@ void ShellSort(int*arr, int n)
 			arr[end + gap] = temp;
 		}
 	}
-	
+
 }
 
 /*
@@ -68,7 +129,7 @@ void SelectSort(int *arr, int n)
 	for (int i = 0; i < n - 1; i++)
 	{
 		int max = 0;
-		for (int j = 1; j < n - i ; j++)
+		for (int j = 1; j < n - i; j++)
 		{
 			if (arr[max] < arr[j])
 			{
@@ -77,7 +138,7 @@ void SelectSort(int *arr, int n)
 		}
 		if (max != n - i - 1)
 		{
-			int temp = arr[n-i-1];
+			int temp = arr[n - i - 1];
 			arr[n - i - 1] = arr[max];
 			arr[max] = temp;
 		}
@@ -86,95 +147,393 @@ void SelectSort(int *arr, int n)
 
 /*
 *堆排序，不稳定
-*
+*采用堆的向下调整
 */
 
-//向下调整（建堆）
-void AdjustDown(pheap hp, int parent)
+void AdjustDown(int *arr, int parent, int n)
 {
-	assert(hp);
-	//确定第一个非叶子结点的左孩子
-	int lchild = 2 * parent + 1;
-	while (lchild<hp->size)
-	{//判断第一个非叶子结点是否有右孩子并且比较左右孩子的大小，取小的
-		if (lchild + 1< hp->size&&hp->arr[lchild]>hp->arr[lchild + 1])
-			lchild++;
-		if (hp->arr[lchild] >= hp->arr[parent])
+	int child = (parent * 2) + 1;
+	while (child < n)
+	{
+		if (child + 1 < n&&arr[child + 1] > arr[child])
+			child++;
+		if (arr[child] <= arr[parent])
 			break;
-		DataType temp = hp->arr[parent];
-		hp->arr[parent] = hp->arr[lchild];
-		hp->arr[lchild] = temp;
-		parent = lchild;
-		lchild = 2 * parent + 1;
+		int temp = arr[child];
+		arr[child] = arr[parent];
+		arr[parent] = temp;
+		parent = child;
+		child = 2 * parent + 1;
 	}
 }
-
 //堆排序
-void HeapSort(pheap hp)
+void HeapSort(int *arr, int n)
 {
+	int j;
+	int parent = ((n - 2) >> 1);
+	//建堆
+	for (j = parent; j >= 0; j--)
+	{
+		AdjustDown(arr, j, n);
+	}
 	int i;
 	int temp;
-	int num = hp->size;
-	while (hp->size > 1)
+	int num = n;
+	while (n > 1)
 	{
-		for (i = hp->size - 1; i > 0; i--)
+		for (i = n - 1; i > 0; i--)
 		{
-			temp = hp->arr[0];
-			hp->arr[0] = hp->arr[i];
-			hp->arr[i] = temp;
-			hp->size--;
-			AdjustDown(hp, 0);
+			temp = arr[0];
+			arr[0] = arr[i];
+			arr[i] = temp;
+			n--;
+			AdjustDown(arr, 0, n);
 		}
 	}
-	printf("堆排序:");
-	for (int i = 0; i < num; i++)
+}
+/*
+* 冒泡排序，由小到大
+*/
+void BubbleSort(int *array, int n)
+{
+	int i, j, t;
+	int flag = 0;
+	for (i = 0; i < n; i++)
 	{
-		printf("%d ", hp->arr[i]);
+		flag = 1;
+		for (j = 0; j < n - i; j++)
+		{
+			if (array[j] > array[j + 1])
+			{
+				flag = 0;
+				t = array[j];
+				array[j] = array[j + 1];
+				array[j + 1] = t;
+			}
+		}
+		if (1 == flag)
+		{
+			return;
+		}
 	}
 }
-
-
 
 /*
-*快速插入排序  不稳定 
-*递归
+*快速插入排序  不稳定  序列接近有序时，快排时间复杂度较大，
+*所以快排不适合作为基本有序序列的排序方法
 */
-int partion(int*arr, int left, int right)
-{
-	int prev = left - 1;
-	int pcur = left;
-	int key = arr[right - 1];
-	while (pcur < right)
-	{
-		if (arr[pcur] < key&&++prev != pcur)
-		{
-			int temp = arr[pcur];
-			arr[pcur] = arr[prev];
-			arr[prev] = temp;
-		}
-		++pcur;
-	}
-	if (++prev != right - 1)
-	{
-		int temp = arr[right-1];
-		arr[right-1] = arr[prev];
-		arr[prev] = temp;
-	}
-	return prev;
-}
-void QuickSort(int *array, int start, int end)
-{
-	assert(array != NULL);
-	int tmp = partion1(array, start, end);
 
-	if (tmp > start + 1)
+/*
+*由于选取枢轴元素为首元素或者尾元素，在序列基本有序时，选取数组中极大值或极小值的概率增大
+*这种情况下快排的时间复杂度太大，所以改变枢轴元素的选取方法，
+*增加一个中间的选取位置，通过三个位置的比较来选取中间元素作为枢轴元素
+*/
+
+int GetMidNum(int *array, int left, int right)
+{
+	int mid = (left + ((right - left) >> 1));
+	if (array[left] < array[right])
 	{
-		QuickSort(array, 0, tmp - 1);
+		if (array[mid] < array[left])
+			return left;
+		else if (array[mid]>array[right])
+			return right;
+		else
+			return mid;
 	}
-	if (tmp < end - 1)
+	else
 	{
-		QuickSort(array, tmp + 1, end);
+		if (array[mid] < array[right])
+			return right;
+		else if (array[mid]>array[left])
+			return left;
+		else
+			return mid;
 	}
+}
+
+/*
+* 给定两个指针，同时从后往前和从前往后遍历，直至两个指针相遇则表示一次排序结束；
+*/
+
+int Partition1(int*arr, int left, int right)
+{
+	int start = left;
+	int end = right;
+	int key = arr[right];
+	while (start != end)
+	{
+		while (arr[start] <= key&&start != end)
+		{
+			start++;
+		}
+
+		while (arr[end] >= key&&start != end)
+		{
+			end--;
+		}
+		Swap(&arr[start], &arr[end]);
+	}
+	if (start != right)
+	{
+		Swap(&arr[start], &arr[right]);
+	}
+	return start;
+}
+/*
+*挖坑法
+* 和常规做法区别在于将枢轴元素保存起来，并将枢轴元素所在位置空缺出来，给交换的元素提供位置
+*/
+
+int Partition2(int *arr, int head, int tail)
+{
+	int key = arr[head];
+	while (head != tail)
+	{
+		while (arr[tail] >= key && head != tail)
+		{
+			tail--;
+		}
+		arr[head] = arr[tail];
+		while (arr[head] <= key && head != tail)
+		{
+			head++;
+		}
+		arr[tail] = arr[head];
+	}
+	arr[head] = key;
+	return head;
+
+}
+/*
+
+* 基于快速排序思想：选取一个枢轴元素，枢轴元素左侧的元素均小于右侧的元素；
+
+* 常规的做法是同时从后往前和从前往后遍历，直至两个指针相遇；
+
+* 下面的做法是只从前往后遍历，将比枢轴元素小的元素移动到枢轴之前。
+*/
+int Partition3(int *arr, int head, int tail)
+{
+	int temp;
+	int i, j;
+	int pivot = head;
+	for (i = head + 1; i <= tail; i++)
+	{
+		if (arr[i] < arr[pivot])
+		{
+			temp = arr[i];
+			for (j = i - 1; j >= pivot; j--)
+			{
+				arr[j + 1] = arr[j];
+			}
+			arr[pivot++] = temp;
+		}
+	}
+	return pivot;
+}
+
+void QuickSort1(int *arr, int head, int tail)
+{
+	assert(arr != NULL);
+	int pivot = Partition3(arr, head, tail);
+	//子序列的元素个数大于等于2，对划分的两个字序列再次进行快速排序；
+	//因此递归出口就是子序列的元素个数小于2
+	if (head != pivot&&head != pivot - 1)
+	{
+		QuickSort1(arr, head, pivot - 1);
+	}
+	if (pivot != tail&&pivot + 1 != tail)
+	{
+		QuickSort1(arr, pivot + 1, tail);
+	}
+}
+
+/*
+* 利用栈的快排非递归
+*/
+void QuickSort2(int *array, int n)
+{
+	assert(array);
+	stack p;
+	StackInit(&p);
+	StackPush(&p, n);
+	StackPush(&p, 0);
+	while (!StackEmpty(&p))
+	{
+		int head = StackTop(&p);
+		StackPop(&p);
+
+		int tail = StackTop(&p);
+		StackPop(&p);
+
+		if (tail - head > 1)
+		{
+			int div = Partition2(array, head, tail);
+
+			StackPush(&p, head);
+			StackPush(&p, div + 1);
+
+			StackPush(&p, div);
+			StackPush(&p, tail);
+		}
+	}
+}
+
+/*
+*归并排序   稳定	适合做外部排序
+*递归
+*从小到大
+*/
+
+//将两个有序子序列合并为一个有序子序列
+void Merge1(int *sourceArr, int *targetArr, int head, int mid, int tail)
+{
+	int i, j, k;
+	i = head;
+	k = head;
+	j = mid + 1;
+	for (; i <= mid&&j <= tail; k++)
+	{
+		if (sourceArr[i] <= sourceArr[j])
+		{
+			targetArr[k] = sourceArr[i++];
+		}
+		else
+		{
+			targetArr[k] = sourceArr[j++];
+		}
+	}
+	if (i <= mid)
+	{
+		for (; k <= tail; k++)
+		{
+			targetArr[k] = sourceArr[i++];
+		}
+	}
+	if (j <= tail)
+	{
+		for (; k <= tail; k++)
+		{
+			targetArr[k] = sourceArr[j++];
+		}
+	}
+}
+//归并递归
+void MergeSort1(int *sourceArr, int *targetArr, int head, int tail)
+{
+	int mid = head + ((tail - head) >> 1);
+	int *temp = (int *)malloc(sizeof(int)*(tail - head + 1));
+	if (head == tail)
+	{
+		targetArr[head] = sourceArr[head];
+	}
+	else
+	{
+		MergeSort1(sourceArr, temp, head, mid);
+		MergeSort1(sourceArr, temp, mid + 1, tail);
+		Merge1(temp, targetArr, head, mid, tail);
+	}
+}
+
+//归并非递归
+void Merge2(int *sourceArr, int head, int mid, int tail)
+{
+	int i, j, k;
+	i = head;
+	k = 0;
+	j = mid + 1;
+	int *targetArr;
+	targetArr = (int *)malloc(sizeof(int)*(tail - head + 1));
+
+	for (; i <= mid&&j <= tail; k++)
+	{
+		if (sourceArr[i] > sourceArr[j])
+		{
+			targetArr[k] = sourceArr[j++];
+		}
+		else
+		{
+			targetArr[k] = sourceArr[i++];
+		}
+	}
+
+	if (i <= mid)
+	{
+		for (; k < tail - head + 1; k++)
+		{
+			targetArr[k] = sourceArr[i++];
+		}
+	}
+
+	if (j <= tail)
+	{
+		for (; k < tail - head + 1; k++)
+		{
+			targetArr[k] = sourceArr[j++];
+		}
+	}
+
+	for (i = head, k = 0; i <= tail; i++, k++)
+	{
+		sourceArr[i] = targetArr[k];
+	}
+}
+void MergeSort2(int*sourceArr, int n)
+{
+	int head;
+	int gap = 2;
+	while (gap <= n)
+	{
+		for (head = 0; head + gap <= n; head += gap)
+		{
+			Merge2(sourceArr, head, head + gap / 2 - 1, head + gap - 1);
+		}
+		Merge2(sourceArr, head, head + gap / 2 - 1, n - 1);//处理当剩余元素个数不足gap时
+		gap = gap << 1;
+	}
+	Merge2(sourceArr, 0, gap / 2 - 1, n - 1);//处理当gap大于数组大小时
+}
+
+
+
+
+
+
+//非比较排序
+/*
+*计数排序   稳定	时间：O(n+k)  空间：O(n+k)
+*/
+
+void CountSort(int *arr, int n)
+{
+	int min = arr[0];//保存数组中最小值
+	int max = arr[0];//保存数组中最大值
+	for (int i = 1; i < n; i++)
+	{
+		if (arr[i] < min)
+			min = arr[i];
+
+		if (arr[i] > max)
+			max = arr[i];
+	}
+	int range = max - min + 1;//辅助空间的大小
+	int *count = (int *)malloc(range*sizeof(int));
+	memset(count, 0, sizeof(int)*range);
+	for (int i = 0; i < n; ++i)
+	{
+		count[arr[i] - min]++;//array[i]-min是将该数对应到辅助空间的下标，记录出现的次数
+	}
+
+	int index = 0;
+	for (int i = 0; i < range; ++i)//遍历辅助空间
+	{
+		while (count[i]--)
+		{
+			arr[index++] = i + min;//将下标处的数对应回原数组
+		}
+	}
+	free(count);
 }
 
 
@@ -191,7 +550,7 @@ int main()
 {
 	int arr[10] = { 3,8,9,0,6,2,5,7,4,1 };
 
-	InsertSort(arr,10);
+	/*InsertSort(arr,10);
 	printf("插入排序：");
 	Print(arr, 10);
 
@@ -203,12 +562,32 @@ int main()
 	printf("选择排序：");
 	Print(arr, 10);
 
-	QuickSort(arr, 1, 10);
-	printf("快速排序：");
+	HeapSort(arr, 10);
+	printf("堆排序：");
 	Print(arr, 10);
 
-	HeapSort(arr);
-	printf("快速排序：");
+	BubbleSort(arr,9);
+	printf("冒泡排序：");
+	Print(arr, 10);
+
+	QuickSort1(arr, 0, 9);
+	printf("快速递归排序：");
+	Print(arr, 10);
+
+	QuickSort2(arr, 10);
+	printf("快速非递归排序：");
+	Print(arr, 10);
+
+	MergeSort1(arr,arr,0,9);
+	printf("归并递归排序：");
+	Print(arr, 10);
+
+	MergeSort2(arr, 10);
+	printf("归并非递归排序：");
+	Print(arr, 10);*/
+
+	CountSort(arr, 10);
+	printf("计数排序：");
 	Print(arr, 10);
 
 	system("pause");
