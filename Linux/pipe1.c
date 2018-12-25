@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<errno.h>
 
+
 //匿名管道的使用
 int main()
 {
