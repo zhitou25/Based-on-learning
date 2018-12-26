@@ -6,6 +6,7 @@
 */
 
 
+
 int main()
 {
 	char src[1024];
