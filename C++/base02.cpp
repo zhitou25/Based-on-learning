@@ -1,5 +1,6 @@
 #include<iostream>
 #include<stdlib.h>
+
 using namespace std;
 //内存空间管理
 class Test
