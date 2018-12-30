@@ -17,6 +17,41 @@ int get_onenum(int *num)
 	}
 	return count;
 }
+//求最大公约数
+int Gcd1(int a, int b)
+{
+	while (a*b)
+	{
+		if (a > b)
+		{
+			a -= b;
+		}
+		else
+		{
+			b -= a;
+		}
+	}
+	return a == 0 ? b : a;
+}
+//求最小公倍数
+int Gcd2(int a, int b)
+{
+
+	int temp1 = a;
+	int temp2 = b;
+	while (a*b)
+	{
+		if (a > b)
+		{
+			a %= b;
+		}
+		else
+		{
+			b %= a;
+		}
+	}
+	return (temp1*temp2) / (a == 0 ? b : a);
+}
 
 
 
