@@ -49,7 +49,8 @@ int main()
 	string suffix(file.substr(pos, file.size() - pos));//pos位置向后获取<file.size() - pos>长度的字符串
 	cout << suffix << endl;*/
 
-//获取url的域名
+
+	//获取url的域名
 	string url("http://www.cplusplus.com/reference/string/string/find/");
 	cout << url << endl;
 	size_t tail = url.rfind("://");//tail指向‘：’
@@ -59,13 +60,23 @@ int main()
 		return -1;
 	}
 	tail += 3;//tail指向第一个‘W’
-	size_t rear = url.find('/', tail);
-	string address = url.substr(tail, rear - tail);
+	size_t rear = url.find('/', tail);//从tail位置向后查找第一次出现‘/’字符的位置
+	string address = url.substr(tail, rear - tail);//从tail处向后查找（rear-tail）个长度，并将这段子串赋给另一个对象，它的结尾无'\0'
 	cout << address << endl;
 	//获取url的协议前缀
-	size_t cont = url.find("://");
-	url.erase(0, cont + 3);
+	size_t cont = url.find(":");//正向查找第一次出现字符串的位置，没找到返回 string::npos
+	cout << cont << endl;
+	url.erase(cont, url.size() - cont);//从cont位置起（包括cout位置），（url.size()-cont）表示擦除的长度
 	cout << url << endl;
+
+	string s6("Life");
+	s6.push_back(' ');//尾插空格字符
+	cout << s6 << endl;
+	s6.append("is ");//追加字符串
+	cout << s6 << endl;
+	s6 += "not elsewhere";//追加字符或者字符串
+	cout << s6 << endl;
 	system("pause");
 	return 0;
+}
 }
