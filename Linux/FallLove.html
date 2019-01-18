@@ -1,0 +1,87 @@
+<!--
+    声名文档类型：html
+	作用：符合w3c统一标准规范
+	每个浏览器对html css js的代码都有不同的编译模式（兼容模式）
+-->
+<!doctype html>
+<html><!--根目录节点标签-->
+      <head><!--头部  规定一些信息（提供给浏览器识别）-->
+	       <meta charset="UTF-8">
+           <!--网页文档三要素1.标题2.关键词3.描述-->
+		   <title>爱心飘落</title><!--网页文档标题-->
+		   <!-- 关键词：提供给搜索引擎-->
+		   <meta name="keywords" content="爱心，飘落">
+		    <meta name="description" content="描述：对网站内容的大致描述">
+			<style>/*css样式*/
+			   /*.heart{
+			   position:relative;/*相对定位：参考物 相对于自己本身位置的定位  
+			       width:10px;
+			       height:16px;*/
+			       /*border:2px solid blue;/*边框线：宽度 类型（实心的线）颜色 
+			    /*顺时针方向：左上 右上 右下 左下*
+			   border-radius:50% 50% 0 40% 50% 0;/*圆角属性*/
+			   /* 顺时针方向
+			   斜杠前面是水平边  斜杠后面是竖直边
+			   border——radius:50% 40% 30% 10%/10% 30% 40% 50%;*/
+			  }
+			 /*.heart div{/*混合选择器：选择的越详细 优先级越高*/
+			      /* position:absolute;/*绝对定位：相对于拥有定位属性的最近（absolute/relative/fixed）的父元素定位
+				   left:0;
+				   top:0;
+			       width:10px;
+				   height:16px;
+				   background:red;
+				   border-radius:10px 10px 0 0;
+			 }
+			 .left{
+                    transform:rotate(-45deg);/*css3的变换属性：负为逆时针
+			 }
+			  .right{
+			  /*css3变换属性：向上移动 向右移动 顺时针旋转
+              transform:translateY(-16px) translateX(4px) rotate(45deg);
+			 }*/
+			 html,body{
+			        height:100%;
+			      }
+			 Body{
+			 overflow:hidden;/*超出隐藏*/
+			 background:url("images/0.jpg")no-repeat;
+			 background-size:100% 100%/*背景尺寸*/
+			 }
+			 /*css伪类 before after*/
+			 .heart:before, .heart:after{/*在div内容前面添加内容*/
+			       content:"";/*伪类的内容：不能省略 没有内容就留空*/
+				   position:absolute;
+				   left:0;
+				   top:0;
+			       width:10px;
+				   height:16px;
+				   background:red;
+				   border-radius:10px 10px 0 0;
+				   transform:rotate(-45deg);
+                 }
+			 .heart:after{/*在div内容后面添加内容*/
+			        content:"";/*伪类的内容：不能省略 没有内容就留空*/
+				    left:4px;
+				   transform:rotate(45deg);
+               }
+			 </style>
+	  </head>
+	  <body><!--身体 用户能够看到的东西-->
+	       <!--div盒子模型标签：宽度 高度 位置 背景(css样式)
+            <div class="heart"><!--class="自定义名称"命名规范：见名知意
+                <!-- <div class="left"></div>
+			     <div class="right"></div>
+			</div>
+			<div class="heart"></div>
+			<div class="heart"></div>
+			<div class="heart"></div>
+			<div class="heart"></div>-->
+			<script src="js/jquery-1.2.6.min.js"></script>
+			<script src="js/snowfall.jquery.js"></script>
+			<script type="text/javascript">
+			    $(document).snowfall({
+			        flakecount:50//爱心的个数
+			    })
+          </body>
+    </html>
